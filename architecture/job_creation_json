@@ -1,0 +1,1 @@
+This document describes the structure of the job creation JSON. It builds upon the existing JSON structure used in the [molecular manifest](https://github.com/oncoscape/TCGAarchive/blob/master/manifests/os.ucsc.molecular.manifest.json).
