@@ -16,6 +16,8 @@ class ValidationConfigurator(object):
         if not configs_dict:
             with open("validation_configs.yml","r") as config_file:
                 configs_dict = load_yaml(config_file)
+       # validation works for two d data. how to deal with JSON data structures?
+       # add FAIL state to job state machine
         try:
             self.valid_datatype = vc_configs_dict[file_datatype][type]
         except KeyError as e:

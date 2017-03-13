@@ -1,6 +1,7 @@
     oncoscape-dev-db1.sttrcancer.io:
         user_name: oncoscapeRead
         password: i1f4d9botHD4xnZ
+        db: tcga
     oncoscape-dev-db2.sttrcancer.io:
         user_name: oncoscapeRead
         password: i1f4d9botHD4xnZ

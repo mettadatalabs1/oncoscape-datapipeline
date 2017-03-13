@@ -10,4 +10,5 @@ pymongo==3.4.0,
 pytest>=3.0,
 simplejson==3.10.0,
 tox==2.6
+PyYAML==3.12
 """
