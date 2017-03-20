@@ -87,3 +87,6 @@ ENV/
 
 # Rope project settings
 .ropeproject
+# ignore sqllite db
+workflow/db/*
+*.pid
