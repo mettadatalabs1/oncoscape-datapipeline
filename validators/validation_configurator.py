@@ -54,7 +54,7 @@ class ValidationConfigurator(object):
             value = self.valid_datatype(value)
             return value, True
         except ValueError:
-            return False
+            return value, False
 
     def validate_value(self, value):
         return value in self.valid_values
@@ -64,4 +64,5 @@ class ValidationConfigurator(object):
         is_valid_value = None
         if is_valid_type and self.valid_values:
             is_valid_value = self.validate_value(value)
-        return (is_valid_type, is_valid_value)
+            is_valid_type = is_valid_type and is_valid_value
+        return is_valid_type

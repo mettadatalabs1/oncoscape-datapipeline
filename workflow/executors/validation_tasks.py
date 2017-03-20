@@ -2,23 +2,6 @@ from validators.validation_configurator import ValidationConfigurator
 from pipeline.models import InputFile
 
 
-def validate_file(input_file_obj):
-    if not input_file_obj.directory and not input_file_obj.s3_path:
-        return None
-    if not input_file_obj.file:
-        return None
-    input_file = (input_file_obj.directory
-                        if input_file_obj.directory else input_file_obj.s3_path)
-    input_file += "/" + input_file_obj.file
-    with open(input_file, "r") as file_to_validate:
-        header = file_to_validate.readline().strip("\n")
-        samples = [{sample: {"values":[],"genes":[],},}
-                    for sample in header.split("\t")[1:]]
-        print (samples[-1])
-        for line in file_to_validate:
-            pass
-
-
 class HugoValidator(object):
     # hugo_genes_map (Dictionary): a dictionary that has the hugo genes and
     # respective aliases. Each entry is db:{gene: Set(aliases),}.
@@ -73,20 +56,48 @@ class HugoValidator(object):
                     break
         return gene_valid_status
 
-
-job_config = {
-    "dataset": "acc",
-    "source": "ucsc",
-    "type": "cnv",
-    "directory": "/work/code/mettalabs/hutch/sttr/oncoscape-datapipeline/test_files",
-    "process": "broadcurated",
-    "file": "Gistic2_CopyNumber_Gistic2_all_data_by_genes.xxsmall",
-    "row_identifier": "genes",
-    "col_identifier": "cohort",
-    "job_id": "job001",
-    "job_status": {"state": "IN-PROGRESS",
-                "details": ["INGESTED"]
-               },
-    "job_creation_time": None,
-    "job_log_reference": "/var/logs/jobs/jobID/"
-}
+def validate_file(input_file_obj):
+    if not input_file_obj.directory and not input_file_obj.s3_path:
+        return None
+    if not input_file_obj.file:
+        return None
+    input_file = (input_file_obj.directory
+                        if input_file_obj.directory else input_file_obj.s3_path)
+    input_file += "/" + input_file_obj.file
+    # validation_configurator (ValidationConfigurator)
+    validation_configurator = ValidationConfigurator(input_file_obj.datatype)
+    with open(input_file, "r") as file_to_validate:
+        header = file_to_validate.readline().strip("\n")
+        # header row: gene sample1 sample2 sample 3
+        # valid_samples(list(dictionary): A list of dictionary to store all the
+        # valid rows for a given sample. The dictionary has sample as the key
+        # and a dictionary with 2 lists, one for valid values and other for
+        # the genes. The values and genes are 1-1 meaning value[0] corresponds
+        # to the value of the first gene for the sample. If we have an invalid
+        # value, then we will not store the gene for the sample.
+        # todo: add documentation link to the datastructure.
+        valid_samples = [{"sample": sample, "values":[],"genes":[],}
+                    for sample in header.split("\t")[1:]]
+        print (valid_samples[-1])
+        for line in file_to_validate:
+            line_tokens = line.strip("\n").split("\t")
+            gene = line_tokens[0]
+            hugo_validation = HugoValidator.validate_hugo("tcga", gene)
+            gene_valid = False
+            if hugo_validation[1]:
+                # the gene is alias if first token is not None else valid
+                gene_valid = "alias" if hugo_validation[0] else "valid"
+                enumerated_tokens = enumerate(line_tokens[1:])
+                # parse rest of the line only for valid genes
+                for idx,line_token in enumerated_tokens:
+                    # the element is valid
+                    if line_token == "INVALID":
+                        print (line_token)
+                        print (validation_configurator.validate(line_token))
+                        print ("*"*10)
+                    if validation_configurator.validate(line_token):
+                        # the index refers to the sample location in valid_samples.
+                        # append the gene and the value at the end
+                        valid_samples[idx]["genes"].append(gene)
+                        valid_samples[idx]["values"].append(line_token)
+            input_file_obj.valid_samples = valid_samples
