@@ -1,10 +1,11 @@
-    oncoscape-dev-db1.sttrcancer.io:
+    oncoscape:
+        hosts:
+          - host: oncoscape-dev-db1.sttrcancer.io
+            port: 27017
+          - host: oncoscape-dev-db2.sttrcancer.io
+          - host: oncoscape-dev-db3.sttrcancer.io
         user_name: oncoscapeRead
         password: i1f4d9botHD4xnZ
         db: tcga
-    oncoscape-dev-db2.sttrcancer.io:
-        user_name: oncoscapeRead
-        password: i1f4d9botHD4xnZ
-    oncoscape-dev-db3.sttrcancer.io:
-        user_name: oncoscapeRead
-        password: i1f4d9botHD4xnZ
+        options:
+          authSource: admin
