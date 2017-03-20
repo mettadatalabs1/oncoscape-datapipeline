@@ -65,4 +65,4 @@ class ValidationConfigurator(object):
         if is_valid_type and self.valid_values:
             is_valid_value = self.validate_value(value)
             is_valid_type = is_valid_type and is_valid_value
-        return is_valid_type
+        return is_valid_type, value

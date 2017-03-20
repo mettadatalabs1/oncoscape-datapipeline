@@ -91,13 +91,15 @@ def validate_file(input_file_obj):
                 # parse rest of the line only for valid genes
                 for idx,line_token in enumerated_tokens:
                     # the element is valid
-                    if line_token == "INVALID":
-                        print (line_token)
-                        print (validation_configurator.validate(line_token))
-                        print ("*"*10)
-                    if validation_configurator.validate(line_token):
+                    is_valid, value = validation_configurator.validate(
+                                          line_token)
+                    if is_valid:
                         # the index refers to the sample location in valid_samples.
                         # append the gene and the value at the end
                         valid_samples[idx]["genes"].append(gene)
-                        valid_samples[idx]["values"].append(line_token)
+                        valid_samples[idx]["values"].append(value)
+                        # THIS HAS TO CHANGE. IF THERE IS ONE INVALID ENTRY
+                        # the whole sample should change.
+                        # HANDLE NULL. Default is NA. Put this in job_config
+                        # sklearn.decomposition.PCA lib for PCA 
             input_file_obj.valid_samples = valid_samples
