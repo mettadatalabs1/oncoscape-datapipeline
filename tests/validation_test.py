@@ -17,7 +17,7 @@ def test_data_type_validation():
     vc = ValidationConfigurator("cnv")
     # this is an issue we need to fix. since "2" can be cast into a  float
     # this is returning true. Should be false
-    assert vc.validate("2") == (True, None)
+    assert vc.validate("2") == (False, None)
 
 def test_protocol_creation():
     """

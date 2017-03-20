@@ -42,10 +42,18 @@ class ValidationConfigurator(object):
             self.valid_values = None
 
     def validate_datatype(self, value):
+
+        if self.valid_datatype is float:
+            try:
+                value = int(value)
+                return value, False
+            except ValueError:
+                pass
+
         try:
             value = self.valid_datatype(value)
             return value, True
-        except TypeError:
+        except ValueError:
             return False
 
     def validate_value(self, value):
